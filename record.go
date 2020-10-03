@@ -9,7 +9,6 @@ import (
 	"record/handler"
 	"record/maintain"
 	"record/mod/account"
-	"record/mod/heartbeat"
 	"record/mod/port"
 	"record/tpl"
 	"record/util"
@@ -34,7 +33,7 @@ func main() {
 	if !def.CheckEncryptKey() {
 		os.Exit(def.WrongEncryptKeyLength)
 	}
-	HTTPServer()
+
 	if util.GetPassword() != def.Password {
 		os.Exit(def.WrongPassword)
 	}
@@ -47,7 +46,7 @@ func main() {
 		case 2:
 			port.Port()
 		case 3:
-			heartbeat.Heartbeat()
+			HTTPServer()
 		case -1:
 			fmt.Printf("Encrypt Key: [%s]", def.EncryptKey)
 		case 0:

@@ -8,6 +8,9 @@ import (
 )
 
 func Encrypt(str string) string {
+	if len(str) == 0 {
+		return ""
+	}
 	data, err := hash.AesEncryptCBC([]byte(str), []byte(def.EncryptKey))
 	if err != nil {
 		log.Println(err)
@@ -17,6 +20,9 @@ func Encrypt(str string) string {
 }
 
 func Decrypt(str string) string {
+	if len(str) == 0 {
+		return ""
+	}
 	d, err := hex.DecodeString(str)
 	if err != nil {
 		log.Println(err)

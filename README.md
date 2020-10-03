@@ -2,6 +2,7 @@
 
 - [x] Manage Password
 - [x] Manage Port Allocation
+- [x] Visualize Heartbeat Data
 
 ## Development environment
 

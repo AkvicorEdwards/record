@@ -118,3 +118,11 @@ type Heartbeat struct {
 	Date string
 	Data string
 }
+
+func (h *Heartbeat) Encrypt() {
+	h.Data = util.Encrypt(h.Data)
+}
+
+func (h *Heartbeat) Decrypt() {
+	h.Data = util.Decrypt(h.Data)
+}

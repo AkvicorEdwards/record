@@ -19,6 +19,8 @@ func HeartbeatAddRecord(date, data string) (uint32, bool) {
 		Data: data,
 	}
 
+	h.Encrypt()
+
 	if err := db.Table("heartbeat").Create(&h).Error; err != nil {
 		log.Println(err)
 		return 0, false
@@ -54,6 +56,8 @@ func HeartbeatUpdate(heartbeat Heartbeat) bool {
 	lockHeartbeat.Lock()
 	defer lockHeartbeat.Unlock()
 
+	heartbeat.Encrypt()
+
 	res := db.Table("heartbeat").Where("id=?", heartbeat.Id).Updates(map[string]interface{}{
 		"date":     heartbeat.Date,
 		"data":     heartbeat.Data,
@@ -80,6 +84,8 @@ func HeartbeatGetByID(id uint32) Heartbeat {
 
 	db.Table("heartbeat").Where("id=?", id).First(&heartbeat)
 
+	heartbeat.Decrypt()
+
 	return heartbeat
 }
 
@@ -92,6 +98,8 @@ func HeartbeatGetByDate(date string) Heartbeat {
 
 	db.Table("heartbeat").Where("date=?", date).First(&heartbeat)
 
+	heartbeat.Decrypt()
+
 	return heartbeat
 }
 
@@ -103,6 +111,10 @@ func HeartbeatGetAll() []Heartbeat {
 	heartbeat := make([]Heartbeat, 0)
 
 	db.Table("heartbeat").Find(&heartbeat)
+
+	for k, _ := range heartbeat {
+		heartbeat[k].Decrypt()
+	}
 
 	return heartbeat
 }
@@ -131,6 +143,11 @@ func HeartbeatGetByRegexp(field, reg string) []Heartbeat {
 			res = append(res, v)
 		}
 	}
+
+	for k, _ := range res {
+		res[k].Decrypt()
+	}
+
 	return res
 }
 
