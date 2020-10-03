@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name=viewport
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+    <title>Heartbeat</title>
+    <script src="./js/echarts.min.js"
+            integrity="sha512-OvWfXEXFlgwaMYESoKZRrPGq9Ndjcf7pMgp+NjbUNeqEA1OOOUbLgquJGOzvh7H78qinNObGwRiFIj22es61Eg=="
+            crossorigin="anonymous"></script>
+    <script src="./js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <div id="chart" :style="{width: '100%', height: '300px'}"></div>
+    <form style="padding-left: 1%;padding-right: 1%;padding-top: 30px" id="req_forms">
+        <label>起始
+            <input id="date_begin" type="date" value="">
+        </label><br/><br/>
+        <label>结束
+            <input id="date_end" type="date">
+        </label><br/><br/>
+        <button type="button" onclick="location='heartbeat?date='+formValue()">筛选</button>
+    </form>
+    <form style="padding-left: 1%;padding-right: 1%;padding-top: 40px" method="post" action="/heartbeat">
+        <label>日期
+            <input id="sub_date" name="date" type="date" value="">
+        </label><br/><br/>
+        <label><textarea name="data"></textarea></label><br/>
+        <button type="submit">提交</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    Date.prototype.toDateInputValue = (function () {
+        let local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0, 10);
+    });
+
+    let inputText = '' +{{ .DATA }};
+    if (inputText.length === 0) {
+        inputText = "0,0,0%"
+    }
+    let lines = inputText.split(/\r?\n/);
+    // console.log(lines)
+
+    function getCsvValuesFromLine(line) {
+        return line.split(',');
+    }
+
+    let heartbeat_date = [];
+    let heartbeat_rate = [];
+    let heartbeat_range = [];
+    for (let i = 0; i < lines.length; i += 1) {
+        let l = getCsvValuesFromLine(lines[i]);
+        heartbeat_date.push(l[0]);
+        heartbeat_rate.push(l[1]);
+        heartbeat_range.push(l[2].substr(0, l.length - 1));
+    }
+
+    new Vue({
+        el: '#app',
+        data: {},
+        computed: {},
+        methods: {
+            drawLine() {
+                let chart = echarts.init(document.getElementById('chart'))
+                chart.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#00BDBE'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['心率'],
+                    },
+                    grid: {
+                        top: 40,
+                        bottom: 20,
+                        right: 35,
+                        left: 35
+                    },
+                    color: ['#00BDBE', '#2B97FB', '#FF9500', '#FFCC00', '#FF3B30'],
+                    xAxis: {
+                        axisLine: {
+                            lineStyle: {
+                                color: '#E8E8E8'
+                            },
+                        },
+                        axisLabel: {
+                            color: '#494949'
+                        },
+                        axisTick: {
+                            show: false,
+                        },
+                        data: heartbeat_date
+                    },
+                    yAxis: [
+                        {
+                            name: '心率',
+                            type: 'value',
+                            nameTextStyle: {
+                                color: '#323232'
+                            },
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: '#E8E8E8'
+                                }
+                            },
+                            axisLabel: {
+                                color: '#494949'
+                            },
+                            // x轴对应的竖线
+                            splitLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: '#E8E8E8'
+                                }
+                            },
+                            // 坐标轴刻度
+                            axisTick: {
+                                show: false,
+                            },
+                        },
+                    ],
+                    series: [
+                        {
+                            name: '心率',
+                            type: 'line',
+                            yAxisIndex: 0,
+                            smooth: true,
+                            data: heartbeat_rate
+                        },
+                    ]
+                });
+            },
+        },
+        beforeMount() {
+        },
+        mounted() {
+            this.drawLine()
+        },
+        watch: {
+            'message'() {
+            }
+        }
+    })
+
+    function formValue() {
+        let date_begin = document.getElementById("date_begin").value
+        if (date_begin.length === 0) {
+            return "all";
+        }
+        let date_end = document.getElementById("date_end").value
+        if (date_end.length === 0) {
+            return date_begin;
+        }
+        return date_begin + "," + date_end;
+    }
+
+    document.getElementById("sub_date").value = new Date(new Date().setDate(new Date().getDate() - 1)).toDateInputValue()
+</script>
+
+</body>
+</html>

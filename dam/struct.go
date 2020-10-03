@@ -112,3 +112,9 @@ func (p *PortDB) Transfer() Port {
 	_ = json.Unmarshal([]byte(util.Decrypt(p.Port)), &port.Port)
 	return port
 }
+
+type Heartbeat struct {
+	Id uint32
+	Date string
+	Data string
+}

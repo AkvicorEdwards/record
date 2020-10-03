@@ -40,9 +40,22 @@ create table port
     comment  text
 );
 ` + `
+create table heartbeat
+(
+    id   integer
+        constraint heartbeat_pk
+            primary key,
+    date text,
+    data text
+);
+
+create unique index heartbeat_date_uindex
+    on heartbeat (date);
+` + `
 
 INSERT INTO inc (name, val) VALUES ('account', 0);
 INSERT INTO inc (name, val) VALUES ('port', 0);
+INSERT INTO inc (name, val) VALUES ('heartbeat', 0);
 `
 )
 

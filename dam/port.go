@@ -87,6 +87,7 @@ func PortGet(id uint32) Port {
 
 	return port.Transfer()
 }
+
 func PortGetByRegexp(field, reg string) []Port {
 	if !Connected {
 		Connect()
