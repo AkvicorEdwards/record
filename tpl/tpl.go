@@ -8,14 +8,18 @@ import (
 var err error
 var errCnt = 0
 
+var Index *template.Template
 var Login *template.Template
+var Account *template.Template
 var Heartbeat *template.Template
 
 func Parse() {
 	err = nil
 	errCnt = 0
 
+	Index = addFromFile("./tpl/index.html")
 	Login = addFromFile("./tpl/login.html")
+	Account = addFromFile("./tpl/account.html")
 	Heartbeat = addFromFile("./tpl/heartbeat.html")
 
 	log.Printf("Parsing the html template was completed with %d errors\n", errCnt)

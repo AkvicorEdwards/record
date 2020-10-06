@@ -4,7 +4,7 @@ package def
 const Password = "12345678"
 
 // Use for encrypt data
-const EncryptKey = "1234567812345678"
+const EncryptKey = "123456781234567812345678"
 
 const DatabaseFileName = "record.db"
 

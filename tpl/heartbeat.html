@@ -21,7 +21,13 @@
         <label>结束
             <input id="date_end" type="date">
         </label><br/><br/>
-        <button type="button" onclick="location='heartbeat?date='+formValue()">筛选</button>
+        <label>左边界
+            <input id="left_border" type="number">
+        </label><br/><br/>
+        <label>右边界
+            <input id="right_border" type="number">
+        </label><br/><br/>
+        <button type="button" onclick="location='heartbeat?date='+formValue()+formValue2()">筛选</button>
     </form>
     <form style="padding-left: 1%;padding-right: 1%;padding-top: 40px" method="post" action="/heartbeat">
         <label>日期
@@ -39,6 +45,18 @@
         return local.toJSON().slice(0, 10);
     });
 
+    function getQueryString(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURIComponent(r[2]);
+        }
+        return null;
+    }
+
+    let l = getQueryString("l");
+    let r = getQueryString("r");
+
     let inputText = '' +{{ .DATA }};
     if (inputText.length === 0) {
         inputText = "0,0,0%"
@@ -54,10 +72,13 @@
     let heartbeat_rate = [];
     let heartbeat_range = [];
     for (let i = 0; i < lines.length; i += 1) {
-        let l = getCsvValuesFromLine(lines[i]);
-        heartbeat_date.push(l[0]);
-        heartbeat_rate.push(l[1]);
-        heartbeat_range.push(l[2].substr(0, l.length - 1));
+        if(l != null && r != null && (i < l || i > r)) {
+            continue
+        }
+        let li = getCsvValuesFromLine(lines[i]);
+        heartbeat_date.push(li[0]);
+        heartbeat_rate.push(li[1]);
+        heartbeat_range.push(li[2].substr(0, li.length - 1));
     }
 
     new Vue({
@@ -165,7 +186,26 @@
         return date_begin + "," + date_end;
     }
 
+    function formValue2() {
+        let l = document.getElementById("left_border").value
+        if (l.length === 0) {
+            return "";
+        }
+        let r = document.getElementById("right_border").value
+        if (r.length === 0) {
+            return "";
+        }
+        return "&l=" + l + "&r=" + r;
+    }
+
     document.getElementById("sub_date").value = new Date(new Date().setDate(new Date().getDate() - 1)).toDateInputValue()
+    let dateBE = getQueryString("date").split(",");
+    if (dateBE.length === 1) {
+        document.getElementById("date_begin").value = dateBE[0];
+    } else if(dateBE.length === 2) {
+        document.getElementById("date_begin").value = dateBE[0];
+        document.getElementById("date_end").value = dateBE[1];
+    }
 </script>
 
 </body>

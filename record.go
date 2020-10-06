@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,15 +20,26 @@ const Menu = `
 ##########################
 # 1. Account             #
 # 2. Port                #
-# 3. Heartbeat           #
+# 3. HTTP Server         #
 # 0. Exit                #
 ##########################
 `
 
+var httpStarted = flag.Bool("http", false, "HTTP Server")
+var initDatabase = flag.Bool("init", false, "Init Database")
+
 func main() {
-	if len(os.Args) >= 2 && os.Args[1] == "init" {
+	flag.Parse()
+
+	if *initDatabase {
 		maintenance.InitDatabase()
 	}
+
+	if *httpStarted {
+		*httpStarted = false
+		HTTPServer()
+	}
+
 	go maintenance.ShutDownListener()
 
 	if !def.CheckEncryptKey() {
@@ -57,6 +69,11 @@ func main() {
 }
 
 func HTTPServer() {
+	if *httpStarted {
+		return
+	}
+	*httpStarted = true
+
 	tpl.Parse()
 	handler.ParsePrefix()
 	addr := fmt.Sprintf(":%d", def.Port)
