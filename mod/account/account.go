@@ -9,11 +9,12 @@ import (
 const Menu = `
 ##########################
 #        Account         #
-# 1. List                #
-# 2. Add record          #
-# 3. Delete record       #
-# 4. Update record       #
-# 5. Search by field     #
+# 1. Index               #
+# 2. List                #
+# 3. Add record          #
+# 4. Delete record       #
+# 5. Update record       #
+# 6. Search by field     #
 # 0. Exit                #
 ##########################
 `
@@ -41,6 +42,16 @@ func Account() {
 				if k != 0 {
 					fmt.Println()
 				}
+				fmt.Printf("# ID:[%d] Title:[%s] Comment:[%s]\n", v.Id, v.Title, v.Comment)
+			}
+			fmt.Println("##########################################")
+		case 2:
+			accounts := dam.AccountGetAll()
+			fmt.Println("##########################################")
+			for k, v := range accounts {
+				if k != 0 {
+					fmt.Println()
+				}
 				fmt.Printf("# ID:[%d] Title:[%s]\n", v.Id, v.Title)
 				fmt.Printf("# Account:[%s] Password:[%s]\n", v.Account, v.Password)
 				fmt.Println("# Secret Question:")
@@ -54,7 +65,7 @@ func Account() {
 				fmt.Printf("# Comment:[%s]\n", v.Comment)
 			}
 			fmt.Println("##########################################")
-		case 2:
+		case 3:
 			fmt.Println("Please input Title:")
 			title := util.ReadLine()
 			fmt.Println("Please input Account:")
@@ -121,7 +132,7 @@ func Account() {
 			} else {
 				fmt.Println("Failure")
 			}
-		case 3:
+		case 4:
 			fmt.Println("Please input id:")
 			id := util.ReadUInt32()
 			fmt.Printf("Are you sure to delete the [%d] record? yes/No\n", id)
@@ -135,7 +146,7 @@ func Account() {
 			} else {
 				fmt.Println("Failure")
 			}
-		case 4:
+		case 5:
 			fmt.Println("Please input id:")
 			id := util.ReadUInt32()
 			account := dam.AccountGet(id)
@@ -227,7 +238,7 @@ func Account() {
 					break
 				}
 			}
-		case 5:
+		case 6:
 			fmt.Print(Field)
 			fmt.Println("Please input field id:")
 			id := util.ReadUInt32()

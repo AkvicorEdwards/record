@@ -9,11 +9,12 @@ import (
 const Menu = `
 ##########################
 #          Port          #
-# 1. List                #
-# 2. Add record          #
-# 3. Delete record       #
-# 4. Update record       #
-# 5. Search by field     #
+# 1. Index               #
+# 2. List                #
+# 3. Add record          #
+# 4. Delete record       #
+# 5. Update record       #
+# 6. Search by field     #
 # 0. Exit                #
 ##########################
 `
@@ -41,6 +42,17 @@ func Port() {
 				if k != 0 {
 					fmt.Println()
 				}
+				fmt.Printf("# ID:[%d] Title:[%s] Platform:[%s] Comment:[%s]\n",
+					v.Id, v.Title, v.Platform, v.Comment)
+			}
+			fmt.Println("##########################################")
+		case 2:
+			ports := dam.PortGetAll()
+			fmt.Println("##########################################")
+			for k, v := range ports {
+				if k != 0 {
+					fmt.Println()
+				}
 				fmt.Printf("# ID:[%d] Title:[%s] Platform:[%s]\n",
 					v.Id, v.Title, v.Platform)
 				for _, val := range v.Port {
@@ -49,7 +61,7 @@ func Port() {
 				fmt.Printf("# Comment:[%s]\n", v.Comment)
 			}
 			fmt.Println("##########################################")
-		case 2:
+		case 3:
 			fmt.Println("Please input Title:")
 			title := util.ReadLine()
 			fmt.Println("Please input Port ('.exit' to exit):")
@@ -85,7 +97,7 @@ func Port() {
 			} else {
 				fmt.Println("Failure")
 			}
-		case 3:
+		case 4:
 			fmt.Println("Please input id:")
 			id := util.ReadUInt32()
 			fmt.Printf("Are you sure to delete the [%d] record? yes/No\n", id)
@@ -99,7 +111,7 @@ func Port() {
 			} else {
 				fmt.Println("Failure")
 			}
-		case 4:
+		case 5:
 			fmt.Println("Please input id:")
 			id := util.ReadUInt32()
 			port := dam.PortGet(id)
@@ -160,7 +172,7 @@ func Port() {
 					break I
 				}
 			}
-		case 5:
+		case 6:
 			fmt.Print(Field)
 			fmt.Println("Please input field id:")
 			id := util.ReadUInt32()
