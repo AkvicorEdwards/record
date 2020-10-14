@@ -15,6 +15,7 @@ var (
 	lockAccount   = sync.Mutex{}
 	lockPort = sync.Mutex{}
 	lockHeartbeat = sync.Mutex{}
+	lockKey = sync.Mutex{}
 )
 
 // 建立数据库连接
@@ -83,6 +84,7 @@ func LockAll() bool {
 	lockAccount.Lock()
 	lockPort.Lock()
 	lockHeartbeat.Lock()
+	lockKey.Lock()
 	Close()
 	return true
 }

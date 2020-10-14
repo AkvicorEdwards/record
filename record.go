@@ -8,8 +8,9 @@ import (
 	"os"
 	"record/def"
 	"record/handler"
-	"record/maintain"
+	maintenance "record/maintain"
 	"record/mod/account"
+	"record/mod/key"
 	"record/mod/port"
 	"record/tpl"
 	"record/util"
@@ -21,6 +22,7 @@ const Menu = `
 # 1. Account             #
 # 2. Port                #
 # 3. HTTP Server         #
+# 4. Key                 #
 # 0. Exit                #
 ##########################
 `
@@ -59,6 +61,8 @@ func main() {
 			port.Port()
 		case 3:
 			HTTPServer()
+		case 4:
+			key.Key()
 		case -1:
 			fmt.Printf("Encrypt Key: [%s]", def.EncryptKey)
 		case 0:

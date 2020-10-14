@@ -52,10 +52,24 @@ create table heartbeat
 create unique index heartbeat_date_uindex
     on heartbeat (date);
 ` + `
+create table key
+(
+    id      integer
+        constraint key_pk
+            primary key,
+    title   text,
+    key     text,
+    comment text
+);
+
+create unique index key_title_uindex
+    on key (title);
+` + `
 
 INSERT INTO inc (name, val) VALUES ('account', 0);
 INSERT INTO inc (name, val) VALUES ('port', 0);
 INSERT INTO inc (name, val) VALUES ('heartbeat', 0);
+INSERT INTO inc (name, val) VALUES ('key', 0);
 `
 )
 

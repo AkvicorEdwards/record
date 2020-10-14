@@ -126,3 +126,46 @@ func (h *Heartbeat) Encrypt() {
 func (h *Heartbeat) Decrypt() {
 	h.Data = util.Decrypt(h.Data)
 }
+
+type KeyInfo struct {
+	Key string `json:"key"`
+	Comment string `json:"comment"`
+}
+
+type Key struct {
+	Id uint32 `json:"id"`
+	Title string `json:"title"`
+	Key []KeyInfo `json:"port"`
+	Comment string `json:"comment"`
+}
+
+func (p *Key) Transfer() KeyDB {
+	port := KeyDB{
+		Id:       p.Id,
+		Title:    util.Encrypt(p.Title),
+		Key:     "",
+		Comment:  util.Encrypt(p.Comment),
+	}
+	data, _ := json.Marshal(p.Key)
+	port.Key = util.Encrypt(string(data))
+	return port
+}
+
+type KeyDB struct {
+	Id uint32
+	Title string
+	Key string
+	Comment string
+}
+
+func (p *KeyDB) Transfer() Key {
+	port := Key{
+		Id:       p.Id,
+		Title:    util.Decrypt(p.Title),
+		Key:     make([]KeyInfo, 0),
+		Comment:  util.Decrypt(p.Comment),
+	}
+	_ = json.Unmarshal([]byte(util.Decrypt(p.Key)), &port.Key)
+	return port
+}
+
