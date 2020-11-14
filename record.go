@@ -3,31 +3,25 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
-	"net/http"
 	"os"
 	"record/def"
-	"record/handler"
 	maintenance "record/maintain"
 	"record/mod/account"
 	"record/mod/key"
 	"record/mod/port"
-	"record/tpl"
 	"record/util"
-	"time"
 )
 
 const Menu = `
 ##########################
 # 1. Account             #
 # 2. Port                #
-# 3. HTTP Server         #
-# 4. Key                 #
+# 3. Key                 #
 # 0. Exit                #
 ##########################
 `
 
-var httpStarted = flag.Bool("http", false, "HTTP Server")
+//var httpStarted = flag.Bool("http", false, "HTTP Server")
 var initDatabase = flag.Bool("init", false, "Init Database")
 
 func main() {
@@ -37,10 +31,10 @@ func main() {
 		maintenance.InitDatabase()
 	}
 
-	if *httpStarted {
-		*httpStarted = false
-		HTTPServer()
-	}
+	//if *httpStarted {
+	//	*httpStarted = false
+	//	HTTPServer()
+	//}
 
 	go maintenance.ShutDownListener()
 
@@ -60,9 +54,9 @@ func main() {
 		case 2:
 			port.Port()
 		case 3:
-			HTTPServer()
-		case 4:
 			key.Key()
+		//case 4:
+		//	HTTPServer()
 		case -1:
 			fmt.Printf("Encrypt Key: [%s]", def.EncryptKey)
 		case 0:
@@ -72,29 +66,29 @@ func main() {
 	}
 }
 
-func HTTPServer() {
-	if *httpStarted {
-		return
-	}
-	*httpStarted = true
-
-	tpl.Parse()
-	handler.ParsePrefix()
-	addr := fmt.Sprintf(":%d", def.Port)
-	server := http.Server{
-		Addr:              addr,
-		Handler:           &handler.MyHandler{},
-		ReadTimeout:       20 * time.Minute,
-	}
-	log.Printf("http://127.0.0.1%s\n", addr)
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Println("Recovered in f", r)
-			}
-		}()
-		if err := server.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
-}
+//func HTTPServer() {
+//	if *httpStarted {
+//		return
+//	}
+//	*httpStarted = true
+//
+//	tpl.Parse()
+//	handler.ParsePrefix()
+//	addr := fmt.Sprintf(":%d", def.Port)
+//	server := http.Server{
+//		Addr:              addr,
+//		Handler:           &handler.MyHandler{},
+//		ReadTimeout:       20 * time.Minute,
+//	}
+//	log.Printf("http://127.0.0.1%s\n", addr)
+//	go func() {
+//		defer func() {
+//			if r := recover(); r != nil {
+//				fmt.Println("Recovered in f", r)
+//			}
+//		}()
+//		if err := server.ListenAndServe(); err != nil {
+//			panic(err)
+//		}
+//	}()
+//}

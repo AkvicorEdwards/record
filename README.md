@@ -7,7 +7,6 @@
 
 ## Development environment
 
-- Windows 10
 - Go 1.14
 - Sqlite3
 
